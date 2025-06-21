@@ -1,19 +1,25 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	"log"
+	"main/internal/db"
+	"main/internal/handlers"
 	"net/http"
 )
 
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello"))
-}
-
 func main() {
-	http.HandleFunc("/", helloHandler)
+	if err := godotenv.Load("../../.env"); err != nil {
+		log.Print("no .env file found")
+	}
+
+	http.HandleFunc("/user", handlers.UserRoute)
+
 	log.Println("Server starts at http://localhost:8080")
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal("error starting server")
 	}
+
+	db.ConnDB()
 }
