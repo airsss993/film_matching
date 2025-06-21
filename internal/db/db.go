@@ -15,7 +15,5 @@ func ConnDB() *sql.DB {
 		log.Fatal(err)
 	}
 
-	//defer db.Close()
-
 	return db
 }

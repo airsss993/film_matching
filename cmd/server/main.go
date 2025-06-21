@@ -12,7 +12,9 @@ func main() {
 	if err := godotenv.Load("../../.env"); err != nil {
 		log.Print("no .env file found")
 	}
-	http.HandleFunc("/user", handlers.UserRoute)
+
+	http.HandleFunc("/register", handlers.RegistrationHandler)
+
 	log.Println("Server starts at http://localhost:8080")
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
