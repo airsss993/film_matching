@@ -3,11 +3,11 @@ package models
 import "time"
 
 type User struct {
-	ID           int
-	Name         string
-	Email        string
-	PasswordHash string
-	RegisteredAt time.Time
+	ID           int       `json:"id"`
+	Name         string    `json:"name"`
+	Email        string    `json:"email"`
+	Password     string    `json:"password"`
+	RegisterTime time.Time `json:"register_time"`
 	//Role           string
 	//FavoriteGenres []string
 	//AvatarURL      string

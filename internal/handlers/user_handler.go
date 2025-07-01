@@ -14,13 +14,13 @@ import (
 //var DB *sql.DB
 
 func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
-	type User struct {
+	type RegisterInput struct {
 		Name     string `json:"name"`
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 
-	var user User
+	var user RegisterInput
 
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -58,15 +58,13 @@ func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	service.AddUserToDB(user.Name, user.Email, user.Password)
 }
 
-// добавить обработчик входа по почте
-
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	type User struct {
+	type LoginInput struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 
-	var user User
+	var user LoginInput
 
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
