@@ -11,6 +11,8 @@ import (
 	"net/http"
 )
 
+//var DB *sql.DB
+
 func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	type User struct {
 		Name     string `json:"name"`
@@ -44,7 +46,6 @@ func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "internal error", http.StatusInternalServerError)
 		return
 	}
-	// добавить обработку уже существующего пользователя по email
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 12)
 	if err != nil {
@@ -55,4 +56,36 @@ func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	user.Password = string(hash)
 
 	service.AddUserToDB(user.Name, user.Email, user.Password)
+}
+
+// добавить обработчик входа по почте
+
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	type User struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	var user User
+
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		log.Println("error to decode JSON")
+		return
+	}
+
+	DB := db.ConnDB()
+
+	var hashedPassword string
+	err = DB.QueryRow(`SELECT password FROM users WHERE email = $1`, user.Email).Scan(&hashedPassword)
+	if err != nil {
+		http.Error(w, "failed to get password", http.StatusBadRequest)
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(user.Password))
+	if err != nil {
+		log.Println("failed to compare password")
+	}
+
+	log.Println("successful login")
 }

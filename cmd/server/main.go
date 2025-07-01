@@ -14,6 +14,7 @@ func main() {
 	}
 
 	http.HandleFunc("/register", handlers.RegistrationHandler)
+	http.HandleFunc("/login", handlers.LoginHandler)
 
 	log.Println("Server starts at http://localhost:8080")
 	err := http.ListenAndServe(":8080", nil)
