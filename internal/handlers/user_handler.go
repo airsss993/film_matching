@@ -4,22 +4,28 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"main/internal/db"
 	"main/internal/service"
 	"net/http"
+	"os"
+	"time"
 )
 
-//var DB *sql.DB
+type LoginInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type RegisterInput struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
 
 func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
-	type RegisterInput struct {
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-
 	var user RegisterInput
 
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -56,14 +62,11 @@ func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	user.Password = string(hash)
 
 	service.AddUserToDB(user.Name, user.Email, user.Password)
+
+	log.Println("Successfully registered new account!")
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	type LoginInput struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-
 	var user LoginInput
 
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -74,16 +77,44 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	DB := db.ConnDB()
 
+	var userId string
 	var hashedPassword string
-	err = DB.QueryRow(`SELECT password FROM users WHERE email = $1`, user.Email).Scan(&hashedPassword)
+	err = DB.QueryRow(`SELECT id, password FROM users WHERE email = $1`, user.Email).Scan(&userId, &hashedPassword)
 	if err != nil {
-		http.Error(w, "failed to get password", http.StatusBadRequest)
+		http.Error(w, "failed to get id or password", http.StatusBadRequest)
+		log.Println(err)
+		return
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(user.Password))
 	if err != nil {
-		log.Println("failed to compare password")
+		http.Error(w, "failed to compare password", http.StatusBadRequest)
+		return
+	}
+	log.Println("User data verification: matched.")
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id": userId,
+		"exp":     time.Now().Add(900 * time.Second).Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
+	if err != nil {
+		log.Println("error to sign token", err)
+		return
 	}
 
-	log.Println("successful login")
+	cookie := &http.Cookie{
+		Name:     "token",
+		Value:    tokenString,
+		Path:     "/",
+		MaxAge:   3600,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	}
+
+	http.SetCookie(w, cookie)
+	w.Write([]byte("Cookie set!"))
+
+	log.Println(tokenString)
 }

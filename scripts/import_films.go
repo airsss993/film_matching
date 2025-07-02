@@ -100,9 +100,9 @@ func main() {
 				VALUES ($1, $2, $3, $4, $5, $6)
 			`, movie.Title, movie.Overview, year, posterURL, movie.VoteAverage, strings.Join(genres, ", "))
 			if err != nil {
-				log.Printf("Insert error: %v", err)
+				log.Printf("insert error: %v", err)
 			} else {
-				fmt.Printf("Добавлен фильм: %s (%d)\n", movie.Title, year)
+				fmt.Printf("Add film: %s (%d)\n", movie.Title, year)
 			}
 		}
 	}
