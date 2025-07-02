@@ -77,9 +77,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	DB := db.ConnDB()
 
-	var userId string
+	var userId int
 	var hashedPassword string
 	err = DB.QueryRow(`SELECT id, password FROM users WHERE email = $1`, user.Email).Scan(&userId, &hashedPassword)
+	fmt.Println("USER ID FROM DB", userId)
 	if err != nil {
 		http.Error(w, "failed to get id or password", http.StatusBadRequest)
 		log.Println(err)
@@ -94,7 +95,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("User data verification: matched.")
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": userId,
+		"user_id": float64(userId),
 		"exp":     time.Now().Add(900 * time.Second).Unix(),
 	})
 
@@ -110,11 +111,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 		MaxAge:   3600,
 		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteStrictMode,
 	}
 
 	http.SetCookie(w, cookie)
-	w.Write([]byte("Cookie set!"))
-
-	log.Println(tokenString)
+	log.Println("Token generated.")
 }
