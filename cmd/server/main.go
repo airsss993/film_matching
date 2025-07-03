@@ -5,7 +5,6 @@ import (
 	"log"
 	"main/internal/db"
 	"main/internal/handlers"
-	"main/internal/middleware"
 	"net/http"
 )
 
@@ -16,7 +15,7 @@ func main() {
 
 	http.HandleFunc("/register", handlers.RegistrationHandler)
 	http.HandleFunc("/login", handlers.LoginHandler)
-	http.HandleFunc("/auth", middleware.VerifyToken)
+	//http.HandleFunc("/auth", middleware.VerifyToken)
 	//http.HandleFunc("/film", middleware.VerifyToken)
 
 	log.Println("Server starts at http://localhost:8080")

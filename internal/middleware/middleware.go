@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"github.com/golang-jwt/jwt/v5"
 	"log"
 	"net/http"
@@ -10,51 +11,57 @@ import (
 
 type Err error
 
-func VerifyToken(w http.ResponseWriter, r *http.Request) {
-	func() (float64, Err) {
-		cookie, err := r.Cookie("token")
-		if err != nil {
-			http.Error(w, "error to parse cookie", http.StatusUnauthorized)
-			return 0, err
-		}
+func VerifyToken(r *http.Request) (int, error) {
+	cookie, err := r.Cookie("token")
+	if err != nil {
+		log.Println("error to parse cookie", err)
+		return 0, err
+	}
 
-		tokenString := cookie.Value
+	tokenString := cookie.Value
 
-		type MyCustomClaims struct {
-			UserId float64 `json:"user_id"`
-			jwt.RegisteredClaims
-		}
+	type MyCustomClaims struct {
+		UserId float64 `json:"user_id"`
+		jwt.RegisteredClaims
+	}
 
-		token, err := jwt.ParseWithClaims(tokenString, &MyCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-			return []byte(os.Getenv("SECRET")), nil
-		}, jwt.WithLeeway(5*time.Second))
-		if err != nil {
-			http.Error(w, "Invalid token: "+err.Error(), http.StatusUnauthorized)
-			return 0, err
-		}
+	token, err := jwt.ParseWithClaims(tokenString, &MyCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("SECRET")), nil
+	}, jwt.WithLeeway(5*time.Second))
+	if err != nil {
+		log.Println("invalid token:", err)
+		return 0, err
+	}
 
-		var userId float64
-		claims, ok := token.Claims.(*MyCustomClaims)
-		if !ok || !token.Valid {
-			http.Error(w, "invalid token claims", http.StatusUnauthorized)
-			return 0, err
-		}
+	var userId float64
+	claims, ok := token.Claims.(*MyCustomClaims)
+	if !ok || !token.Valid {
+		log.Println("invalid token claims:", err)
+		return 0, err
+	}
 
-		if time.Now().Unix() > claims.ExpiresAt.Unix() {
-			http.Error(w, "token expired", http.StatusUnauthorized)
-			return 0, err
-		}
+	if time.Now().Unix() > claims.ExpiresAt.Unix() {
+		log.Println("token expired:", err)
+		return 0, err
+	}
 
-		userId = claims.UserId
-		log.Println("[VERIFY] Good token. UserID -", userId)
-		return userId, nil
-	}()
+	userId = claims.UserId
+	log.Println("[VERIFY] Good token. UserID -", userId)
+	return int(userId), nil
 }
 
-//func WithAuth(w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-//	token, err := VerifyToken(r.Cookie("token"))
-//	if err != nil {
-//		log.Println("[AUTH] Token not found.")
-//	}
-//
-//}
+func WithAuth(handler http.HandlerFunc) http.HandlerFunc {
+	func(w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+		type contextKey string
+		const userIDKey contextKey = "userID"
+
+		userId, err := VerifyToken(r)
+		if err != nil {
+			http.Error(w, "failed to verify token", http.StatusUnauthorized)
+			return nil
+		}
+
+		ctx := context.WithValue(r.Context(), userIDKey, userId)
+
+	}
+}
