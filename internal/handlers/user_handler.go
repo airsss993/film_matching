@@ -80,7 +80,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var userId int
 	var hashedPassword string
 	err = DB.QueryRow(`SELECT id, password FROM users WHERE email = $1`, user.Email).Scan(&userId, &hashedPassword)
-	fmt.Println("USER ID FROM DB", userId)
 	if err != nil {
 		http.Error(w, "failed to get id or password", http.StatusBadRequest)
 		log.Println(err)
