@@ -15,14 +15,15 @@ type User struct {
 }
 
 type Film struct {
-	ID          int
-	Title       string
-	Description string
-	Year        int
-	//Genres      []string
-	//Rating      float32
+	ID          int       `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	ReleaseYear int       `json:"release_year"`
+	PosterURL   string    `json:"poster_url"`
+	Rating      float32   `json:"rating"`
+	Genres      []string  `json:"genres"`
+	CreatedAt   time.Time `json:"created_at"`
 	//RatingCount int
-	//PosterURL   string
 	//Country     string
 	//DurationMin int
 	//Director    string

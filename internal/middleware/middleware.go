@@ -10,6 +10,9 @@ import (
 )
 
 type Err error
+type contextKey string
+
+const UserIDKey contextKey = "userID"
 
 func VerifyToken(r *http.Request) (int, error) {
 	cookie, err := r.Cookie("token")
@@ -51,17 +54,14 @@ func VerifyToken(r *http.Request) (int, error) {
 }
 
 func WithAuth(handler http.HandlerFunc) http.HandlerFunc {
-	func(w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-		type contextKey string
-		const userIDKey contextKey = "userID"
-
+	return func(w http.ResponseWriter, r *http.Request) {
 		userId, err := VerifyToken(r)
 		if err != nil {
 			http.Error(w, "failed to verify token", http.StatusUnauthorized)
-			return nil
+			return
 		}
 
-		ctx := context.WithValue(r.Context(), userIDKey, userId)
-
+		ctx := context.WithValue(r.Context(), UserIDKey, userId)
+		handler(w, r.WithContext(ctx))
 	}
 }
