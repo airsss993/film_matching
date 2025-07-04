@@ -2,7 +2,7 @@
 // Includes tab switching, form validation, animations, and API integration placeholders
 
 class AuthManager {
-    constructor() {
+        constructor() {
         this.currentTab = 'login';
         this.isLoading = false;
         this.validators = {
@@ -11,8 +11,9 @@ class AuthManager {
             password: (value) => value.length >= 8,
             confirmPassword: (value, password) => value === password
         };
-
+        
         this.init();
+        this.initInitialAnimation();
     }
 
     init() {
@@ -21,6 +22,20 @@ class AuthManager {
         this.initPasswordToggles();
         this.initSubmitHandlers();
         this.initAnimations();
+    }
+
+    initInitialAnimation() {
+        // Добавляем плавную анимацию появления для изначально видимой формы логина
+        const loginForm = document.getElementById('login-form');
+        loginForm.style.opacity = '0';
+        loginForm.style.transform = 'translateY(20px)';
+        
+        // Небольшая задержка для плавности
+        setTimeout(() => {
+            loginForm.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+            loginForm.style.opacity = '1';
+            loginForm.style.transform = 'translateY(0)';
+        }, 100);
     }
 
     // Tab Switching Logic
@@ -63,18 +78,26 @@ class AuthManager {
         this.clearFormErrors();
     }
 
-    animateFormSwitch(currentForm, nextForm) {
+        animateFormSwitch(currentForm, nextForm) {
+        // Очищаем любые inline стили перед анимацией
+        currentForm.style.transition = '';
+        currentForm.style.opacity = '';
+        currentForm.style.transform = '';
+        nextForm.style.transition = '';
+        nextForm.style.opacity = '';
+        nextForm.style.transform = '';
+        
         // Slide out current form
         currentForm.classList.add('slide-out');
-
+        
         setTimeout(() => {
             currentForm.classList.add('hidden');
             currentForm.classList.remove('slide-out');
-
+            
             // Slide in next form
             nextForm.classList.remove('hidden');
             nextForm.classList.add('slide-in');
-
+            
             setTimeout(() => {
                 nextForm.classList.remove('slide-in');
             }, 300);
