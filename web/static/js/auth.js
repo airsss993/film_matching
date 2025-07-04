@@ -278,7 +278,7 @@ class AuthManager {
                 this.showSuccess('Вход выполнен успешно!');
                 // Переадресация после успешного логина
                 setTimeout(() => {
-                    window.location.href = '/film'; // или любая другая защищенная страница
+                    window.location.href = 'file:///Users/airsss/Desktop/film_matching/web/home.html';
                 }, 1500);
             } else {
                 this.showError(result.message || 'Ошибка входа');

@@ -1,0 +1,506 @@
+/* Base styles */
+:root {
+    /* Netflix-inspired color palette */
+    --primary-red: #e50914;
+    --primary-red-dark: #b8070f;
+    --primary-red-light: #ff1f2f;
+    
+    /* Dark theme colors */
+    --bg-primary: #141414;
+    --bg-secondary: #1a1a1a;
+    --bg-card: #222222;
+    --bg-input: #333333;
+    --bg-hover: #2a2a2a;
+    
+    /* Text colors */
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+    --text-muted: #737373;
+    
+    /* Border colors */
+    --border-primary: #333333;
+    --border-focus: var(--primary-red);
+    
+    /* Gradients */
+    --gradient-bg: linear-gradient(135deg, #141414 0%, #1a1a1a 50%, #0a0a0a 100%);
+    --gradient-card: linear-gradient(145deg, #222222 0%, #1a1a1a 100%);
+    --gradient-button: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-dark) 100%);
+    
+    /* Shadows */
+    --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.6);
+    
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-medium: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    
+    /* Font */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background: var(--gradient-bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(229, 9, 20, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(229, 9, 20, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(229, 9, 20, 0.06) 0%, transparent 50%);
+    z-index: -1;
+    animation: backgroundPulse 20s ease-in-out infinite;
+}
+
+/* Header styles */
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo-icon {
+    color: var(--primary-red);
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.main-nav {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.nav-button:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.nav-button.active {
+    color: var(--primary-red);
+    background: var(--bg-hover);
+}
+
+.logout-button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.logout-button:hover {
+    background: var(--bg-hover);
+    color: var(--primary-red);
+}
+
+/* Main content */
+.main-content {
+    padding-top: 80px;
+    min-height: 100vh;
+}
+
+.view-section {
+    display: none;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.view-section.active {
+    display: block;
+}
+
+/* Film card styles */
+.film-card {
+    background: var(--gradient-card);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-heavy);
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.film-poster {
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+    position: relative;
+}
+
+.film-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.film-info {
+    padding: 2rem;
+}
+
+.film-title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.film-meta {
+    display: flex;
+    gap: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.film-description {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.film-genres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.film-genre {
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.875rem;
+}
+
+.swipe-actions {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.swipe-button {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    color: white;
+}
+
+.swipe-button.like {
+    background: var(--primary-red);
+}
+
+.swipe-button.dislike {
+    background: var(--bg-input);
+}
+
+.swipe-button:hover {
+    transform: scale(1.1);
+}
+
+/* Matches grid */
+.matches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.match-card {
+    background: var(--gradient-card);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: var(--transition-fast);
+}
+
+.match-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-medium);
+}
+
+.match-poster {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+
+.match-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.match-info {
+    padding: 1rem;
+}
+
+.match-title {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.match-meta {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+/* Profile styles */
+.profile-card {
+    background: var(--gradient-card);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.profile-avatar {
+    width: 128px;
+    height: 128px;
+    margin: 0 auto 1rem;
+    background: var(--bg-input);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+}
+
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: var(--bg-input);
+    border-radius: 12px;
+}
+
+.stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-red);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.profile-preferences {
+    background: var(--bg-input);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.profile-preferences h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.preference-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.preference-item {
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .main-nav {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .film-card {
+        margin: 0 1rem;
+    }
+
+    .film-poster {
+        height: 300px;
+    }
+
+    .swipe-actions {
+        padding: 1.5rem;
+        gap: 1rem;
+    }
+
+    .swipe-button {
+        width: 56px;
+        height: 56px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-button {
+        padding: 0.5rem;
+    }
+
+    .nav-button span {
+        display: none;
+    }
+
+    .film-title {
+        font-size: 1.5rem;
+    }
+
+    .film-info {
+        padding: 1.5rem;
+    }
+
+    .profile-card {
+        margin: 0 1rem;
+    }
+}
+
+/* Match animation overlay */
+.match-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.match-content {
+    text-align: center;
+    padding: 2rem;
+    animation: scaleIn 0.5s ease-out;
+}
+
+.match-content h2 {
+    font-size: 2.5rem;
+    color: var(--primary-red);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.match-content p {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+}
+
+.match-content img {
+    max-width: 200px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-heavy);
+    animation: pulseScale 2s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulseScale {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+} 

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film Matching - Home</title>
+    <link rel="stylesheet" href="file:///Users/airsss/Desktop/film_matching/web/static/css/home.css">
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 4L20 8H17L15 4H13L15 8H12L10 4H8L10 8H7L5 4H4C2.89543 4 2 4.89543 2 6V18C2 19.1046 2.89543 20 4 20H20C21.1046 20 22 19.1046 22 18V4H18Z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Film Matching</span>
+            </div>
+            <nav class="main-nav">
+                <button class="nav-button active" data-view="discover">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
+                    </svg>
+                    Discover
+                </button>
+                <button class="nav-button" data-view="matches">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                    </svg>
+                    Matches
+                </button>
+                <button class="nav-button" data-view="profile">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 5C13.66 5 15 6.34 15 8C15 9.66 13.66 11 12 11C10.34 11 9 9.66 9 8C9 6.34 10.34 5 12 5ZM12 19.2C9.5 19.2 7.29 17.92 6 15.98C6.03 13.99 10 12.9 12 12.9C13.99 12.9 17.97 13.99 18 15.98C16.71 17.92 14.5 19.2 12 19.2Z" fill="currentColor"/>
+                    </svg>
+                    Profile
+                </button>
+            </nav>
+            <button class="logout-button" id="logoutButton">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 7L15.59 8.41L18.17 11H8V13H18.17L15.59 15.58L17 17L22 12L17 7ZM4 5H12V3H4C2.9 3 2 3.9 2 5V19C2 20.1 2.9 21 4 21H12V19H4V5Z" fill="currentColor"/>
+                </svg>
+                Logout
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Discover View -->
+        <section class="view-section active" id="discoverView">
+            <div class="film-card">
+                <div class="film-poster">
+                    <img src="" alt="Film Poster" id="currentFilmPoster">
+                </div>
+                <div class="film-info">
+                    <h2 class="film-title" id="currentFilmTitle">Loading...</h2>
+                    <div class="film-meta">
+                        <span class="film-year" id="currentFilmYear"></span>
+                        <span class="film-rating" id="currentFilmRating"></span>
+                        <span class="film-duration" id="currentFilmDuration"></span>
+                    </div>
+                    <p class="film-description" id="currentFilmDescription"></p>
+                    <div class="film-genres" id="currentFilmGenres"></div>
+                </div>
+                <div class="swipe-actions">
+                    <button class="swipe-button dislike" id="dislikeButton">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13.41 12L17.71 7.71L16.29 6.29L12 10.59L7.71 6.29L6.29 7.71L10.59 12L6.29 16.29L7.71 17.71L12 13.41L16.29 17.71L17.71 16.29L13.41 12Z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <button class="swipe-button like" id="likeButton">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Matches View -->
+        <section class="view-section" id="matchesView">
+            <div class="matches-grid" id="matchesGrid">
+                <!-- Matches will be populated here -->
+            </div>
+        </section>
+
+        <!-- Profile View -->
+        <section class="view-section" id="profileView">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 5C13.66 5 15 6.34 15 8C15 9.66 13.66 11 12 11C10.34 11 9 9.66 9 8C9 6.34 10.34 5 12 5ZM12 19.2C9.5 19.2 7.29 17.92 6 15.98C6.03 13.99 10 12.9 12 12.9C13.99 12.9 17.97 13.99 18 15.98C16.71 17.92 14.5 19.2 12 19.2Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <h2 class="profile-name" id="profileName">Loading...</h2>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalSwipes">0</span>
+                        <span class="stat-label">Films Swiped</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalMatches">0</span>
+                        <span class="stat-label">Matches</span>
+                    </div>
+                </div>
+                <div class="profile-preferences">
+                    <h3>Preferences</h3>
+                    <div class="preference-items" id="preferenceItems">
+                        <!-- Preferences will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="file:///Users/airsss/Desktop/film_matching/web/static/js/home.js"></script>
+</body>
+</html> 

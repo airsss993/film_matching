@@ -9,23 +9,21 @@ import (
 	"net/http"
 )
 
-func GetFilm(w http.ResponseWriter, r *http.Request) {
+func GetNextFilm(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value(middleware.UserIDKey)
 	if userID == nil {
 		http.Error(w, "user ID not found in context", http.StatusInternalServerError)
 		return
 	}
-	log.Println("UserID -", userID)
 
 	var film models.Film
 
 	DB := db.ConnDB()
-	row := DB.QueryRow(`
-		SELECT id, title, description, release_year, poster_url, rating, genres, created_at 
-		FROM films 
-		WHERE id = 1`)
+	row := DB.QueryRow(`SELECT * FROM films WHERE id NOT IN (SELECT film_id FROM swipes WHERE user_id = $1) LIMIT 1;`, userID)
 	if row == nil {
 		log.Println("failed to get data")
+		http.Error(w, "no films found", http.StatusNotFound)
+		return
 	}
 
 	var genres string
@@ -40,7 +38,9 @@ func GetFilm(w http.ResponseWriter, r *http.Request) {
 		&film.CreatedAt,
 	)
 	if err != nil {
-		log.Println("failed to scan data")
+		log.Println("failed to scan data:", err)
+		http.Error(w, "failed to get film data", http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
