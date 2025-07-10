@@ -34,12 +34,19 @@ func SwipeHandler(w http.ResponseWriter, r *http.Request) {
 
 	DB := db.ConnDB()
 
-	_, err = DB.Exec(`INSERT INTO swipes (user_id, film_id, liked) VALUES ($1, $2, $3)`, userID, swipe.FilmID, swipe.Liked)
+	action := "skip"
+	if swipe.Liked {
+		action = "like"
+	}
+
+	_, err = DB.Exec(`INSERT INTO swipes (user_id, film_id, action) VALUES ($1, $2, $3)`, userID, swipe.FilmID, action)
 	if err != nil {
 		log.Println("failed to insert swipe:", err)
 		http.Error(w, "failed to save swipe", http.StatusInternalServerError)
 		return
 	}
+
+	log.Printf("User %v swiped %s on film %v", userID, action, swipe.FilmID)
 
 	isMatch := false
 

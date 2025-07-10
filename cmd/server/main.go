@@ -12,12 +12,8 @@ import (
 
 func enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		origin := r.Header.Get("Origin")
-		if origin == "" {
-			origin = "file://"
-		}
-
-		w.Header().Set("Access-Control-Allow-Origin", origin)
+		
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -37,7 +33,8 @@ func main() {
 		log.Print("no .env file found")
 	}
 
-	// API endpoints
+	db.ConnDB()
+
 	http.Handle("/register", enableCORS(http.HandlerFunc(handlers.RegistrationHandler)))
 	http.Handle("/login", enableCORS(http.HandlerFunc(handlers.LoginHandler)))
 	http.Handle("/api/films/next", enableCORS(middleware.WithAuth(handlers.GetNextFilm)))
@@ -64,8 +61,6 @@ func main() {
 	log.Println("Server starts at http://localhost:8080")
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
-		log.Fatal("error starting server")
+		log.Fatal("error starting server: ", err)
 	}
-
-	db.ConnDB()
 }
