@@ -2,7 +2,7 @@
 // Includes tab switching, form validation, animations, and API integration placeholders
 
 class AuthManager {
-        constructor() {
+    constructor() {
         this.currentTab = 'login';
         this.isLoading = false;
         this.validators = {
@@ -11,7 +11,7 @@ class AuthManager {
             password: (value) => value.length >= 8,
             confirmPassword: (value, password) => value === password
         };
-        
+
         this.init();
         this.initInitialAnimation();
     }
@@ -29,7 +29,7 @@ class AuthManager {
         const loginForm = document.getElementById('login-form');
         loginForm.style.opacity = '0';
         loginForm.style.transform = 'translateY(20px)';
-        
+
         // Небольшая задержка для плавности
         setTimeout(() => {
             loginForm.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
@@ -78,7 +78,7 @@ class AuthManager {
         this.clearFormErrors();
     }
 
-        animateFormSwitch(currentForm, nextForm) {
+    animateFormSwitch(currentForm, nextForm) {
         // Очищаем любые inline стили перед анимацией
         currentForm.style.transition = '';
         currentForm.style.opacity = '';
@@ -86,33 +86,33 @@ class AuthManager {
         nextForm.style.transition = '';
         nextForm.style.opacity = '';
         nextForm.style.transform = '';
-        
+
         // Slide out current form
         currentForm.classList.add('slide-out');
-        
+
         setTimeout(() => {
             currentForm.classList.add('hidden');
             currentForm.classList.remove('slide-out');
-            
+
             // Slide in next form
             nextForm.classList.remove('hidden');
             nextForm.classList.add('slide-in');
-            
+
             setTimeout(() => {
                 nextForm.classList.remove('slide-in');
             }, 300);
         }, 150);
     }
 
-        // Form Validation
+    // Form Validation
     initFormValidation() {
         const inputs = document.querySelectorAll('input');
-        
+
         inputs.forEach(input => {
             input.addEventListener('blur', () => this.validateField(input));
             input.addEventListener('input', () => {
                 this.clearFieldError(input);
-                
+
                 // Если изменился пароль, проверяем также confirmPassword в той же форме
                 if (input.name === 'password') {
                     const form = input.closest('form');
@@ -134,12 +134,12 @@ class AuthManager {
         let isValid = true;
         let errorMessage = '';
 
-                switch (fieldName) {
+        switch (fieldName) {
             case 'name':
                 isValid = this.validators.username(value); // используем ту же валидацию для имени
                 errorMessage = 'Имя должно содержать минимум 3 символа';
                 break;
-            
+
             case 'email':
                 isValid = this.validators.email(value);
                 errorMessage = 'Введите корректный email адрес';
@@ -278,7 +278,7 @@ class AuthManager {
                 this.showSuccess('Вход выполнен успешно!');
                 // Переадресация после успешного логина
                 setTimeout(() => {
-                    window.location.href = 'file:///Users/airsss/Desktop/film_matching/web/home.html';
+                    window.location.href = 'home.html';
                 }, 1500);
             } else {
                 this.showError(result.message || 'Ошибка входа');
@@ -465,15 +465,16 @@ class AuthManager {
                 email: data.email,
                 password: data.password
             };
-            
+
             console.log('Отправляем данные логина:', requestData);
             console.log('JSON строка:', JSON.stringify(requestData));
-            
+
             const response = await fetch('http://localhost:8080/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include', // Добавляем для сохранения cookie
                 body: JSON.stringify(requestData)
             });
 
@@ -483,16 +484,16 @@ class AuthManager {
             if (response.ok) {
                 // Успешный логин - cookie установлен автоматически
                 console.log('Логин успешен');
-                return { success: true, message: 'Вход выполнен успешно!' };
+                return {success: true, message: 'Вход выполнен успешно!'};
             } else {
                 // Ошибка - получаем текст ошибки
                 const errorText = await response.text();
                 console.log('Ошибка логина:', errorText);
-                return { success: false, message: errorText || 'Ошибка входа' };
+                return {success: false, message: errorText || 'Ошибка входа'};
             }
         } catch (error) {
             console.error('Login API error:', error);
-            return { success: false, message: 'Ошибка сети. Проверьте соединение.' };
+            return {success: false, message: 'Ошибка сети. Проверьте соединение.'};
         }
     }
 
@@ -503,15 +504,16 @@ class AuthManager {
                 email: data.email,
                 password: data.password
             };
-            
+
             console.log('Отправляем данные регистрации:', requestData);
             console.log('JSON строка:', JSON.stringify(requestData));
-            
+
             const response = await fetch('http://localhost:8080/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include', // Добавляем для консистентности
                 body: JSON.stringify(requestData)
             });
 
@@ -521,16 +523,16 @@ class AuthManager {
             if (response.ok) {
                 // Успешная регистрация
                 console.log('Регистрация успешна');
-                return { success: true, message: 'Аккаунт создан успешно!' };
+                return {success: true, message: 'Аккаунт создан успешно!'};
             } else {
                 // Ошибка - получаем текст ошибки
                 const errorText = await response.text();
                 console.log('Ошибка регистрации:', errorText);
-                return { success: false, message: errorText || 'Ошибка регистрации' };
+                return {success: false, message: errorText || 'Ошибка регистрации'};
             }
         } catch (error) {
             console.error('Register API error:', error);
-            return { success: false, message: 'Ошибка сети. Проверьте соединение.' };
+            return {success: false, message: 'Ошибка сети. Проверьте соединение.'};
         }
     }
 
@@ -594,4 +596,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Export for potential external use
-window.AuthManager = AuthManager; 
+window.AuthManager = AuthManager;

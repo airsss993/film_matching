@@ -48,7 +48,7 @@ logoutButton.addEventListener('click', async () => {
         });
 
         if (response.ok) {
-            window.location.href = 'file:///Users/airsss/Desktop/film_matching/web/auth.html';
+            window.location.href = '/auth.html';
         } else {
             throw new Error('Logout failed');
         }
@@ -83,9 +83,10 @@ function updateFilmCard(film) {
 
     document.getElementById('currentFilmPoster').src = film.poster_url;
     document.getElementById('currentFilmTitle').textContent = film.title;
-    document.getElementById('currentFilmYear').textContent = film.year;
+    document.getElementById('currentFilmYear').textContent = film.release_year;
     document.getElementById('currentFilmRating').textContent = `★ ${film.rating}`;
-    document.getElementById('currentFilmDuration').textContent = `${film.duration} min`;
+    // Убираем duration так как этого поля нет в модели
+    // document.getElementById('currentFilmDuration').textContent = `${film.duration} min`;
     document.getElementById('currentFilmDescription').textContent = film.description;
 
     const genresContainer = document.getElementById('currentFilmGenres');
@@ -233,4 +234,4 @@ document.addEventListener('keydown', (event) => {
 });
 
 // Initial load
-loadNextFilm(); 
+loadNextFilm();

@@ -7,6 +7,7 @@ import (
 	"main/internal/middleware"
 	"main/internal/models"
 	"net/http"
+	"strings"
 )
 
 func GetNextFilm(w http.ResponseWriter, r *http.Request) {
@@ -41,6 +42,15 @@ func GetNextFilm(w http.ResponseWriter, r *http.Request) {
 		log.Println("failed to scan data:", err)
 		http.Error(w, "failed to get film data", http.StatusInternalServerError)
 		return
+	}
+
+	if genres != "" {
+		film.Genres = strings.Split(genres, ",")
+		for i, genre := range film.Genres {
+			film.Genres[i] = strings.TrimSpace(genre)
+		}
+	} else {
+		film.Genres = []string{}
 	}
 
 	w.Header().Set("Content-Type", "application/json")

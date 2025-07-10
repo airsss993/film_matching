@@ -41,6 +41,9 @@ func main() {
 	http.Handle("/register", enableCORS(http.HandlerFunc(handlers.RegistrationHandler)))
 	http.Handle("/login", enableCORS(http.HandlerFunc(handlers.LoginHandler)))
 	http.Handle("/api/films/next", enableCORS(middleware.WithAuth(handlers.GetNextFilm)))
+	http.Handle("/api/films/swipe", enableCORS(middleware.WithAuth(handlers.SwipeHandler)))
+	http.Handle("/api/matches", enableCORS(middleware.WithAuth(handlers.GetMatches)))
+	http.Handle("/api/users/profile", enableCORS(middleware.WithAuth(handlers.GetUserProfile)))
 	http.Handle("/api/auth/logout", enableCORS(http.HandlerFunc(handlers.LogoutHandler)))
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("../../web/static"))))

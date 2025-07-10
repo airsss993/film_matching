@@ -11,6 +11,8 @@ import (
 	"os"
 	"time"
 
+	"main/internal/middleware"
+
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -68,13 +70,12 @@ func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	// Добавляем CORS заголовки
+
 	w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
-	// Обрабатываем предварительный запрос OPTIONS
 	if r.Method == "OPTIONS" {
 		w.WriteHeader(http.StatusOK)
 		return
@@ -122,6 +123,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Value:    tokenString,
 		Path:     "/",
 		MaxAge:   3600,
+		HttpOnly: false,
+		Secure:   false,
 		SameSite: http.SameSiteLaxMode,
 	}
 
@@ -158,4 +161,73 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie)
 
 	w.WriteHeader(http.StatusOK)
+}
+
+type UserProfile struct {
+	Name         string   `json:"name"`
+	TotalSwipes  int      `json:"total_swipes"`
+	TotalMatches int      `json:"total_matches"`
+	Preferences  []string `json:"preferences"`
+}
+
+type Match struct {
+	Film struct {
+		ID        int     `json:"id"`
+		Title     string  `json:"title"`
+		Year      int     `json:"year"`
+		Rating    float32 `json:"rating"`
+		PosterURL string  `json:"poster_url"`
+	} `json:"film"`
+}
+
+func GetUserProfile(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value(middleware.UserIDKey)
+	if userID == nil {
+		http.Error(w, "user ID not found in context", http.StatusInternalServerError)
+		return
+	}
+
+	DB := db.ConnDB()
+
+	var profile UserProfile
+
+	err := DB.QueryRow(`SELECT username FROM users WHERE id = $1`, userID).Scan(&profile.Name)
+	if err != nil {
+		log.Println("failed to get user name:", err)
+		http.Error(w, "failed to get user profile", http.StatusInternalServerError)
+		return
+	}
+
+	err = DB.QueryRow(`SELECT COUNT(*) FROM swipes WHERE user_id = $1`, userID).Scan(&profile.TotalSwipes)
+	if err != nil {
+		log.Println("failed to get swipes count:", err)
+		profile.TotalSwipes = 0
+	}
+
+	profile.TotalMatches = 0
+	profile.Preferences = []string{"Action", "Drama", "Comedy"}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(profile); err != nil {
+		http.Error(w, "failed to encode response", http.StatusInternalServerError)
+		log.Println("failed to encode response:", err)
+		return
+	}
+}
+
+func GetMatches(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value(middleware.UserIDKey)
+	if userID == nil {
+		http.Error(w, "user ID not found in context", http.StatusInternalServerError)
+		return
+	}
+
+	matches := []Match{}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(matches); err != nil {
+		http.Error(w, "failed to encode response", http.StatusInternalServerError)
+		log.Println("failed to encode response:", err)
+		return
+	}
 }
